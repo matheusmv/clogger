@@ -40,7 +40,7 @@ test_log_file(void)
 }
 
 void
-custom_flog_info(FILE *stream, const char *format, ...)
+custom_log_info(FILE *stream, const char *format, ...)
 {
         va_list args;
         va_start(args, format);
@@ -55,7 +55,7 @@ custom_flog_info(FILE *stream, const char *format, ...)
 }
 
 void
-custom_flog_debug(FILE *stream, const char *format, ...)
+custom_log_debug(FILE *stream, const char *format, ...)
 {
         va_list args;
         va_start(args, format);
@@ -82,8 +82,8 @@ int main(void)
         }
 
         clogger_create(logs);
-        custom_flog_info(logs, "wrapping FLOG_INFO in a custom function");
-        custom_flog_debug(logs, "wrapping %s in a custom function", "FLOG_DEBUG");
+        custom_log_info(logs, "wrapping LOG_INFO in a custom function");
+        custom_log_debug(logs, "wrapping %s in a custom function", "LOG_DEBUG");
 
         fclose(logs);
 

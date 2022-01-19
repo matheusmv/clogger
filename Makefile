@@ -1,12 +1,12 @@
-CC=gcc
+CC := gcc
 
-OBJS=clogger.c
+CFLAGS := -pedantic-errors -Wall -Werror
 
-CFLAGS=-pedantic-errors -Wall -Werror
+SRCS := clogger.c example.c
 
-SRC=example.c
+BIN := example
 
-EXE=example
+FILES := logs.txt logs2.txt
 
 all: CFLAGS+= -O2
 all: relase
@@ -15,7 +15,7 @@ debug: CFLAGS+= -O0 -g
 debug: relase
 
 relase:
-	$(CC) $(CFLAGS) $(OBJS) $(SRC) -o $(EXE)
+	$(CC) $(CFLAGS) $(SRCS) -o $(BIN)
 
 clean:
-	rm $(EXE)
+	$(RM) $(BIN) $(FILES)
