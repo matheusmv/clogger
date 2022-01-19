@@ -69,9 +69,9 @@ get_time(char *dest, size_t dest_size)
 }
 
 static char *
-clogger_Level_string(Level level)
+clogger_type_string(LogType type)
 {
-        switch (level) {
+        switch (type) {
         case LOG_INFO:
                 return _console_logger.colored ? "\x1B[32mINFO\033[0m " : "INFO ";
         case LOG_DEBUG:
@@ -111,7 +111,7 @@ clogger_create(FILE *stream)
 }
 
 void
-clogger(Level level, const char *filename, const char *function, int line, const char *format, ...)
+clogger(LogType type, const char *filename, const char *function, int line, const char *format, ...)
 {
         assert(_console_logger.initialized == true);
 
@@ -125,7 +125,7 @@ clogger(Level level, const char *filename, const char *function, int line, const
 
         va_start(args, format);
 
-        clogger_log(_console_logger.stream, date_time, clogger_Level_string(level), filename, function, line, format, args);
+        clogger_log(_console_logger.stream, date_time, clogger_type_string(type), filename, function, line, format, args);
 
         va_end(args);
 

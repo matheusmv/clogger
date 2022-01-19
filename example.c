@@ -81,7 +81,6 @@ int main(void)
                 exit(EXIT_FAILURE);
         }
 
-        clogger_create(logs);
         custom_log_info(logs, "wrapping LOG_INFO in a custom function");
         custom_log_debug(logs, "wrapping %s in a custom function", "LOG_DEBUG");
 

@@ -3,16 +3,16 @@
 
 #include <stdio.h>
 
-typedef enum Level {
+typedef enum LogType {
         LOG_INFO,
         LOG_DEBUG,
         LOG_WARN,
         LOG_ERROR
-} Level;
+} LogType;
 
 void clogger_create(FILE *stream);
 
-void clogger(Level level, const char *filename, const char *function, int line, const char *format, ...);
+void clogger(LogType type, const char *filename, const char *function, int line, const char *format, ...);
 
 #define LOG_INFO(FORMAT, ...) clogger(LOG_INFO, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
 
