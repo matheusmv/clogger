@@ -2,4 +2,4 @@
 
 simple error messaging and logging system in C
 
-<img src="./assets/52c294af6ec8a934ec34115a28756e5203ad89e228d4bc3c6db3f49d4cb2410f.png" width=100%>
+<img src="./assets/d5573229d2e417af1bf3994794c8960d21426293bdeb8832f38257eaacc4b3e8.png" width=100%>
