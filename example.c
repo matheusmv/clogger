@@ -8,7 +8,7 @@
 void
 test_log(void)
 {
-        clogger_create(stderr);
+        clogger_colored_console(ACTIVE);
         LOG_INFO("info");
         LOG_DEBUG("debug");
         LOG_WARNING("warning");
@@ -26,15 +26,14 @@ test_log_file(void)
                 exit(EXIT_FAILURE);
         }
 
-        clogger_create(logs);
-        LOG_INFO("info message");
-        LOG_INFO("info %d", 1);
-        LOG_DEBUG("debug message");
-        LOG_DEBUG("debug %d", 2);
-        LOG_WARNING("warning message");
-        LOG_WARNING("warning %d", 3);
-        LOG_ERROR("error message");
-        LOG_ERROR("error %d", 4);
+        LOG_INFO_F(logs, "info message");
+        LOG_INFO_F(logs, "info %d", 1);
+        LOG_DEBUG_F(logs, "debug message");
+        LOG_DEBUG_F(logs, "debug %d", 2);
+        LOG_WARNING_F(logs, "warning message");
+        LOG_WARNING_F(logs, "warning %d", 3);
+        LOG_ERROR_F(logs, "error message");
+        LOG_ERROR_F(logs, "error %d", 4);
 
         fclose(logs);
 }
@@ -45,11 +44,10 @@ custom_log_info(FILE *stream, const char *format, ...)
         va_list args;
         va_start(args, format);
 
-        char buffer[1024];
+        char buffer[MSGMAXLENGTH];
         vsnprintf(buffer, sizeof(buffer) - 1, format, args);
 
-        clogger_create(stream);
-        LOG_INFO("%s", buffer);
+        LOG_INFO_F(stream, "%s", buffer);
 
         va_end(args);
 }
@@ -60,11 +58,10 @@ custom_log_debug(FILE *stream, const char *format, ...)
         va_list args;
         va_start(args, format);
 
-        char buffer[1024];
+        char buffer[MSGMAXLENGTH];
         vsnprintf(buffer, sizeof(buffer) - 1, format, args);
 
-        clogger_create(stream);
-        LOG_DEBUG("%s", buffer);
+        LOG_DEBUG_F(stream, "%s", buffer);
 
         va_end(args);
 }
@@ -81,8 +78,8 @@ int main(void)
                 exit(EXIT_FAILURE);
         }
 
-        custom_log_info(logs, "wrapping LOG_INFO in a custom function");
-        custom_log_debug(logs, "wrapping %s in a custom function", "LOG_DEBUG");
+        custom_log_info(logs, "wrapping LOG_INFO_F in a custom function");
+        custom_log_debug(logs, "wrapping %s in a custom function", "LOG_DEBUG_F");
 
         fclose(logs);
 
