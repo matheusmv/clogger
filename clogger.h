@@ -17,12 +17,12 @@ typedef enum Log_Type {
 #define LOG_WARNING(FORMAT, ...) clogger(Log_WARN, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
 #define LOG_ERROR(FORMAT, ...) clogger(Log_ERROR, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
 
-#define LOG_INFO_F(STREAM, FORMAT, ...) clogger_f(Log_INFO, STREAM, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
-#define LOG_DEBUG_F(STREAM, FORMAT, ...) clogger_f(Log_DEBUG, STREAM, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
-#define LOG_WARNING_F(STREAM, FORMAT, ...) clogger_f(Log_WARN, STREAM, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
-#define LOG_ERROR_F(STREAM, FORMAT, ...) clogger_f(Log_ERROR, STREAM, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
+#define LOG_INFO_F(FILEPATH, FORMAT, ...) clogger_f(Log_INFO, FILEPATH, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
+#define LOG_DEBUG_F(FILEPATH, FORMAT, ...) clogger_f(Log_DEBUG, FILEPATH, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
+#define LOG_WARNING_F(FILEPATH, FORMAT, ...) clogger_f(Log_WARN, FILEPATH, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
+#define LOG_ERROR_F(FILEPATH, FORMAT, ...) clogger_f(Log_ERROR, FILEPATH, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
 
 void clogger(Log_Type type, const char *filename, const char *function, int line, const char *format, ...);
-void clogger_f(Log_Type type, FILE *stream, const char *filename, const char *function, int line, const char *format, ...);
+void clogger_f(Log_Type type, const char *filepath, const char *filename, const char *function, int line, const char *format, ...);
 
 #endif
