@@ -2,11 +2,11 @@ CC := gcc
 
 CFLAGS := -pedantic-errors -Wall -Werror
 
-SRCS := clogger.c example.c
+SRCS := ../../clogger.c example.c
 
 BIN := example
 
-FILES := logs.txt logs2.txt
+FILES := logs.txt
 
 all: CFLAGS+= -O2
 all: relase
