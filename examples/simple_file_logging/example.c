@@ -8,21 +8,13 @@
 void
 test_log_file(const char *filename)
 {
-        FILE *logs = NULL;
-        if ((logs = fopen(filename, "a+")) == NULL) {
-                LOG_ERROR("%s", strerror(errno));
-                exit(EXIT_FAILURE);
-        }
+        LOG_INFO_F(filename, "add random %s message in %s", "info", filename);
 
-        LOG_INFO_F(logs, "add random %s message in %s", "info", filename);
+        LOG_DEBUG_F(filename, "add random %s message in %s", "debug", filename);
 
-        LOG_DEBUG_F(logs, "add random %s message in %s", "debug", filename);
+        LOG_WARNING_F(filename, "add random %s message in %s", "warning", filename);
 
-        LOG_WARNING_F(logs, "add random %s message in %s", "warning", filename);
-
-        LOG_ERROR_F(logs, "add random %s message in %s", "error", filename);
-
-        fclose(logs);
+        LOG_ERROR_F(filename, "add random %s message in %s", "error", filename);
 }
 
 int main(void)

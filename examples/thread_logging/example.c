@@ -14,21 +14,21 @@ static struct Threads {
         pthread_t thrd[NTHREADS];
 } _threadsA;
 
-void tstart(pthread_t *thread, void *arg);
+void tstart(pthread_t *thread, const char *filepath);
 void tjoin(pthread_t *thread);
 
 void *
 thread_log_fn(void *arg)
 {
-        FILE *f = arg;
-        if (f == NULL) {
-                LOG_ERROR("file not provided. f = (%s)", f);
+        const char *fp = arg;
+        if (fp == NULL) {
+                LOG_ERROR("file not provided. f = (%s)", fp);
                 return NULL;
         }
 
         const int counter = 10;
         for (int i = 0; i < counter; i++) {
-                LOG_INFO_F(f, "%d info message of thread %ld", i, pthread_self());
+                LOG_INFO_F(fp, "%d info message of thread %ld", i, pthread_self());
                 sleep(3);
         }
 
@@ -37,27 +37,21 @@ thread_log_fn(void *arg)
 
 int main(void)
 {
-        FILE *logs = NULL;
-        if ((logs = fopen("logs.txt", "a+")) == NULL) {
-                LOG_ERROR("%s", strerror(errno));
-                return EXIT_FAILURE;
-        }
+        const char *filepath = "logs.txt";
 
         for (int i = 0; i < NTHREADS; i++)
-                tstart(&_threadsA.thrd[i], logs);
+                tstart(&_threadsA.thrd[i], filepath);
 
         for (int i = 0; i < NTHREADS; i++)
                 tjoin(&_threadsA.thrd[i]);
-
-        fclose(logs);
 
         return EXIT_SUCCESS;
 }
 
 void
-tstart(pthread_t *thread, void *arg)
+tstart(pthread_t *thread, const char *filepath)
 {
-        pthread_create(thread, NULL, thread_log_fn, arg);
+        pthread_create(thread, NULL, thread_log_fn, (void *) filepath);
 }
 
 void
