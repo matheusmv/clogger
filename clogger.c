@@ -23,16 +23,14 @@ static struct Clogger {
         logger_fn console_logger;
 } _logger;
 
-typedef void (*init_fn)(pthread_mutex_t *mutex);
-typedef void (*lock_fn)(pthread_mutex_t *mutex);
-typedef void (*unlock_fn)(pthread_mutex_t *mutex);
+typedef void (*mutexop_fn)(pthread_mutex_t *mutex);
 
 typedef struct CloggerMutex CloggerMutex;
 static struct CloggerMutex {
         pthread_mutex_t mutex;
-        init_fn init;
-        lock_fn lock;
-        unlock_fn unlock;
+        mutexop_fn init;
+        mutexop_fn lock;
+        mutexop_fn unlock;
 } _mutex;
 
 static void
