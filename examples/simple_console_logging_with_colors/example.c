@@ -5,6 +5,8 @@
 
 int main(void)
 {
+        /* -DLCOLOR */
+
         LOG_INFO("random %s message", "info");
         LOG_DEBUG("random %s message", "debug");
         LOG_WARNING("random %s message", "warning");

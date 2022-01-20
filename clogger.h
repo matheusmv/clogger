@@ -1,13 +1,9 @@
 #ifndef _CLOGGER_H
 #define _CLOGGER_H
 
-#include <stdbool.h>
 #include <stdio.h>
 
 #define MSGMAXLENGTH 512
-
-#define ACTIVE   true
-#define INACTIVE false
 
 typedef enum Log_Type {
         Log_INFO,
@@ -26,7 +22,6 @@ typedef enum Log_Type {
 #define LOG_WARNING_F(STREAM, FORMAT, ...) clogger_f(Log_WARN, STREAM, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
 #define LOG_ERROR_F(STREAM, FORMAT, ...) clogger_f(Log_ERROR, STREAM, __FILE__, __func__, __LINE__, FORMAT, ##__VA_ARGS__)
 
-void clogger_colored_console(bool status);
 void clogger(Log_Type type, const char *filename, const char *function, int line, const char *format, ...);
 void clogger_f(Log_Type type, FILE *stream, const char *filename, const char *function, int line, const char *format, ...);
 

@@ -3,9 +3,13 @@
 #include <assert.h>
 #include <pthread.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#define ACTIVE   true
+#define INACTIVE false
 
 typedef void (*to_file_fn)(FILE *stream, const char *time, Log_Type type, const char *filename, const char *function, int line, const char *format, va_list args);
 typedef void (*to_console_fn)(const char *time, Log_Type type, const char *filename, const char *function, int line, const char *format, va_list args);
@@ -83,7 +87,7 @@ clogger_type_string(Log_Type type, bool colored)
 static void
 log_to_file(FILE *stream, const char *time, Log_Type type, const char *filename, const char *function, int line, const char *format, va_list args)
 {
-        clogger_log(stream, time, clogger_type_string(type, false), filename, function, line, format, args);
+        clogger_log(stream, time, clogger_type_string(type, INACTIVE), filename, function, line, format, args);
 }
 
 static void
@@ -101,21 +105,16 @@ clogger_init(void)
         _mutex.lock(&_mutex.mutex);
 
         _logger.console_stream = stderr;
-        _logger.colored = false;
+#ifdef LCOLOR
+        _logger.colored = ACTIVE;
+#else
+        _logger.colored = INACTIVE;
+#endif
         _logger.initialized = true;
         _logger.file_logger = log_to_file;
         _logger.console_logger = log_to_console;
 
         _mutex.unlock(&_mutex.mutex);
-}
-
-void clogger_colored_console(bool status)
-{
-        if (!_logger.initialized) {
-                clogger_init();
-        }
-
-        _logger.colored = status;
 }
 
 static void
