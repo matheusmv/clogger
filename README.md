@@ -21,5 +21,5 @@ if (file == NULL) {
 ### File
 
 ```C
-LOG_ERROR_F("logs/errors.txt", "some crazy shit happened!!!. (%s)", cause);
+LOG_ERROR_F("logs/errors.txt", "connection failed. (%s)", cause);
 ```
