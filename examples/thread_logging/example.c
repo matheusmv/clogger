@@ -7,18 +7,49 @@
 
 #include "../../clogger.h"
 
-#define NTHREADS 10
+#define NTHREADS 5
 
 typedef struct Threads Threads;
 static struct Threads {
         pthread_t thrd[NTHREADS];
-} _threadsA;
+} _threadsA, _threadsB;
 
-void tstart(pthread_t *thread, const char *filepath);
+void tstart(pthread_t *thread, void *(thread_fn)(void *), void *args);
 void tjoin(pthread_t *thread);
 
+void *log_info_file_fn(void *arg);
+
+int main(void)
+{
+        const char *file = "logs.txt";
+
+        for (int i = 0; i < NTHREADS; ++i) {
+                tstart(&_threadsA.thrd[i], log_info_file_fn, (void *) file);
+                tstart(&_threadsB.thrd[i], log_info_file_fn, (void *) file);
+        }
+
+        for (int i = 0; i < NTHREADS; ++i) {
+                tjoin(&_threadsA.thrd[i]);
+                tjoin(&_threadsB.thrd[i]);
+        }
+
+        return EXIT_SUCCESS;
+}
+
+void
+tstart(pthread_t *thread, void *(thread_fn)(void *), void *args)
+{
+        pthread_create(thread, NULL, thread_fn, args);
+}
+
+void
+tjoin(pthread_t *thread)
+{
+        pthread_join(*thread, NULL);
+}
+
 void *
-thread_log_fn(void *arg)
+log_info_file_fn(void *arg)
 {
         const char *fp = arg;
         if (fp == NULL) {
@@ -26,36 +57,15 @@ thread_log_fn(void *arg)
                 return NULL;
         }
 
-        const int counter = 10;
+        LOG_DEBUG("Thread: %ld started", pthread_self());
+
+        const int counter = 5;
         for (int i = 0; i < counter; i++) {
                 LOG_INFO_F(fp, "%d info message of thread %ld", i, pthread_self());
                 sleep(3);
         }
 
+        LOG_DEBUG("Thread: %ld finished", pthread_self());
+
         return NULL;
-}
-
-int main(void)
-{
-        const char *filepath = "logs.txt";
-
-        for (int i = 0; i < NTHREADS; i++)
-                tstart(&_threadsA.thrd[i], filepath);
-
-        for (int i = 0; i < NTHREADS; i++)
-                tjoin(&_threadsA.thrd[i]);
-
-        return EXIT_SUCCESS;
-}
-
-void
-tstart(pthread_t *thread, const char *filepath)
-{
-        pthread_create(thread, NULL, thread_log_fn, (void *) filepath);
-}
-
-void
-tjoin(pthread_t *thread)
-{
-        pthread_join(*thread, NULL);
 }

@@ -1,6 +1,6 @@
 CC := gcc
 
-CFLAGS := -pedantic-errors -Wall -Werror
+CFLAGS := -pedantic-errors -Wall -Werror -Wextra -std=c11
 
 LFLAGS := -lpthread
 
@@ -17,7 +17,7 @@ debug: CFLAGS+= -O0 -g
 debug: relase
 
 relase:
-	$(CC) $(CFLAGS) $(SRCS) -o $(BIN) $(LFLAGS)
+	$(CC) $(CFLAGS) $(SRCS) -o $(BIN) $(LFLAGS) -DLCOLOR
 
 clean:
 	$(RM) $(BIN) $(FILES)

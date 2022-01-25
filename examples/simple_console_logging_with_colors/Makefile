@@ -1,6 +1,6 @@
 CC := gcc
 
-CFLAGS := -pedantic-errors -Wall -Werror
+CFLAGS := -pedantic-errors -Wall -Werror -Wextra -std=c11
 
 SRCS := ../../clogger.c example.c
 
