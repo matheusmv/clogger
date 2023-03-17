@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 200809L
+
 #include "clogger.h"
 
 #include <assert.h>
@@ -5,10 +7,14 @@
 #include <pthread.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#define ISO_DATETIME_FORMAT "%Y-%m-%dT%H:%M:%S%z"
 
 typedef struct clogger {
         FILE            *output;
@@ -89,20 +95,40 @@ clogger_init(void)
         clogger_mutex_unlock(&prv_logger);
 }
 
+static int
+format_datetime_to_iso(struct tm *time_info, char *dest, size_t dest_size)
+{
+        if (time_info == NULL || dest == NULL || dest_size == 0) {
+                return -1;
+        }
+
+        size_t required_size = strftime(NULL, 0, ISO_DATETIME_FORMAT, time_info);
+        if (required_size >= dest_size) {
+                return -1;
+        }
+
+        if (strftime(dest, dest_size, ISO_DATETIME_FORMAT, time_info) == 0) {
+                return -1;
+        }
+
+        return 0;
+}
+
 static void
 get_time(char *dest, size_t dest_size)
 {
-        time_t seconds;
+        time_t current_time = time(NULL);
         struct tm time_info;
 
-        seconds = time(NULL);
-#if defined(_POSIX_SOURCE)
-        tzset();
-        localtime_r(&seconds, &time_info);
-#else
-        time_info = *localtime(&seconds);
-#endif
-        strftime(dest, dest_size, "%b %d %Y %X", &time_info);
+        if (gmtime_r(&current_time, &time_info) == NULL) {
+                perror("gmtime_r");
+                return;
+        }
+
+        if (format_datetime_to_iso(&time_info, dest, dest_size) != 0) {
+                fprintf(stderr, "failed to format datetime");
+                return;
+        }
 }
 
 void
