@@ -25,14 +25,14 @@ typedef struct clogger {
 
 static clogger_t prv_logger;
 
-static char *log_type_string_table[][2] = {
+static const char *log_type_string_table[][2] = {
         [INFO]  = {"INFO ", "\x1B[32mINFO\033[0m "},
         [DEBUG] = {"DEBUG", "\x1B[34mDEBUG\033[0m"},
         [WARN]  = {"WARN ", "\x1B[33mWARN\033[0m "},
         [ERROR] = {"ERROR", "\x1B[31mERROR\033[0m"}
 };
 
-static char *
+static const char *
 log_type_to_string(log_type_t type, bool colored)
 {
         return log_type_string_table[type][colored];
@@ -68,18 +68,6 @@ clogger_new(void)
         clogger_mutex_init(&new_logger);
 
         return new_logger;
-}
-
-static void
-clogger_log(FILE *stream, const char *time, const char *log_level,
-            const char *filename, const char *function, int line,
-            const char *format, va_list args)
-{
-        char message[MSGMAXLENGTH];
-
-        vsnprintf(message, sizeof(message), format, args);
-        fprintf(stream, "%s %s %s:'%s':%d - %s\n", time, log_level, filename,
-                function, line, message);
 }
 
 static void
@@ -135,24 +123,39 @@ get_time(char *dest, size_t dest_size)
         }
 }
 
+static void
+clogger_log(FILE *stream, const char *log_level,
+            const char *filename, const char *function, int line,
+            const char *format, va_list args)
+{
+        char date_time[32];
+        get_time(date_time, sizeof(date_time));
+
+        char message[MSGMAXLENGTH];
+        size_t size = snprintf(message, sizeof(message), format, args);
+        if (size >= sizeof(message)) {
+                size = sizeof(message) - 1;
+                message[size] = '\0';
+        }
+
+        fprintf(stream, "%s %s %s:'%s':%d - %s\n", date_time, log_level, filename,
+                function, line, message);
+}
+
 void
-clogger(log_type_t type, const char *filename, const char *function,
+log_to_console(log_type_t type, const char *filename, const char *function,
         int line, const char *format, ...)
 {
         clogger_init();
 
         va_list args;
 
-        char date_time[32];
-
         clogger_mutex_lock(&prv_logger);
 
         va_start(args, format);
 
-        get_time(date_time, sizeof(date_time));
-
-        char *log_type_str = log_type_to_string(type, prv_logger.colored);
-        clogger_log(prv_logger.output, date_time, log_type_str, filename,
+        const char *log_type_str = log_type_to_string(type, prv_logger.colored);
+        clogger_log(prv_logger.output, log_type_str, filename,
                     function, line, format, args);
 
         va_end(args);
@@ -161,14 +164,12 @@ clogger(log_type_t type, const char *filename, const char *function,
 }
 
 void
-clogger_f(log_type_t type, const char *filepath, const char *filename,
+log_to_file(log_type_t type, const char *filepath, const char *filename,
           const char *function, int line, const char *format, ...)
 {
         clogger_init();
 
         va_list args;
-
-        char date_time[32];
 
         clogger_mutex_lock(&prv_logger);
 
@@ -181,10 +182,8 @@ clogger_f(log_type_t type, const char *filepath, const char *filename,
 
         va_start(args, format);
 
-        get_time(date_time, sizeof(date_time));
-
-        char *log_type_str = log_type_to_string(type, false);
-        clogger_log(file, date_time, log_type_str, filename, function, line,
+        const char *log_type_str = log_type_to_string(type, false);
+        clogger_log(file, log_type_str, filename, function, line,
                     format, args);
 
         va_end(args);
