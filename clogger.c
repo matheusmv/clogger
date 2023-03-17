@@ -85,6 +85,10 @@ clogger_log(FILE *stream, const char *time, const char *log_level,
 static void
 clogger_init(void)
 {
+        if (prv_logger.initialized) {
+                return;
+        }
+
         prv_logger = clogger_new();
         clogger_mutex_lock(&prv_logger);
 
@@ -135,9 +139,7 @@ void
 clogger(log_type_t type, const char *filename, const char *function,
         int line, const char *format, ...)
 {
-        if (!prv_logger.initialized) {
-                clogger_init();
-        }
+        clogger_init();
 
         va_list args;
 
@@ -162,9 +164,7 @@ void
 clogger_f(log_type_t type, const char *filepath, const char *filename,
           const char *function, int line, const char *format, ...)
 {
-        if (!prv_logger.initialized) {
-                clogger_init();
-        }
+        clogger_init();
 
         va_list args;
 
