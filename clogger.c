@@ -41,23 +41,23 @@ log_type_to_string(log_type_t type, bool colored)
 static void
 clogger_mutex_init(clogger_t *clogger)
 {
-        pthread_mutex_init(&clogger->mutex, NULL);
+        assert(pthread_mutex_init(&clogger->mutex, NULL) == 0);
 }
 
 static void
 clogger_mutex_lock(clogger_t *clogger)
 {
-        pthread_mutex_lock(&clogger->mutex);
+        assert(pthread_mutex_lock(&clogger->mutex) == 0);
 }
 
 static void
 clogger_mutex_unlock(clogger_t *clogger)
 {
-        pthread_mutex_unlock(&clogger->mutex);
+        assert(pthread_mutex_unlock(&clogger->mutex) == 0);
 }
 
 static clogger_t
-clogger_create(void)
+clogger_new(void)
 {
         clogger_t new_logger = (clogger_t) {
                 .output      = stderr,
@@ -85,7 +85,7 @@ clogger_log(FILE *stream, const char *time, const char *log_level,
 static void
 clogger_init(void)
 {
-        prv_logger = clogger_create();
+        prv_logger = clogger_new();
         clogger_mutex_lock(&prv_logger);
 
 #if defined(LCOLOR)
