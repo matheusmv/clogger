@@ -4,21 +4,16 @@
 #include <errno.h>
 #include <pthread.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-#define true  1
-#define false 0
-
-#define ACTIVE   true
-#define INACTIVE false
-
 typedef struct clogger {
         FILE            *output;
-        int8_t          colored;
-        int8_t          initialized;
+        bool            colored;
+        bool            initialized;
         pthread_mutex_t mutex;
 } clogger_t;
 
@@ -32,7 +27,7 @@ static char *log_type_string_table[][2] = {
 };
 
 static char *
-log_type_to_string(log_type_t type, int8_t colored)
+log_type_to_string(log_type_t type, bool colored)
 {
         return log_type_string_table[type][colored];
 }
@@ -59,9 +54,9 @@ static clogger_t
 clogger_create(void)
 {
         clogger_t new_logger = (clogger_t) {
-                .output         = stderr,
-                .colored        = INACTIVE,
-                .initialized    = true
+                .output      = stderr,
+                .colored     = false,
+                .initialized = true
         };
 
         clogger_mutex_init(&new_logger);
@@ -88,7 +83,7 @@ clogger_init(void)
         clogger_mutex_lock(&prv_logger);
 
 #if defined(LCOLOR)
-        prv_logger.colored = ACTIVE;
+        prv_logger.colored = true;
 #endif
 
         clogger_mutex_unlock(&prv_logger);
@@ -137,7 +132,7 @@ clogger(log_type_t type, const char *filename, const char *function,
         clogger_mutex_unlock(&prv_logger);
 }
 
-void 
+void
 clogger_f(log_type_t type, const char *filepath, const char *filename,
           const char *function, int line, const char *format, ...)
 {
@@ -162,7 +157,7 @@ clogger_f(log_type_t type, const char *filepath, const char *filename,
 
         get_time(date_time, sizeof(date_time));
 
-        char *log_type_str = log_type_to_string(type, INACTIVE);
+        char *log_type_str = log_type_to_string(type, false);
         clogger_log(file, date_time, log_type_str, filename, function, line,
                     format, args);
 
